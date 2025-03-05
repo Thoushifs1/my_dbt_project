@@ -1,0 +1,13 @@
+my_dbt_project: 
+  outputs:
+    dev:
+      type: snowflake
+      account: FUUFPGC-LZ36572
+      user: SHAIKAHAMMAD
+      password: ThoushifAhammad@123
+      role: ACCOUNTADMIN
+      database: ARROW_INTERNATIONAL
+      warehouse: COMPUTE_WH
+      schema: TEST
+      threads: 1
+  target: dev

@@ -51,5 +51,3 @@ repos:
         args:
           - "--config=.gitleaks.toml"
         exclude: "(test_data/.*|logs/.*)"
-
-

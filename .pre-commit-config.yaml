@@ -52,7 +52,7 @@ repos:
           - "--config=.gitleaks.toml"
         exclude: "(test_data/.*|logs/.*)"
 
-  # Custom Local Hook for Branch Name Check
+  # Custom Local Hook for Branch Name
   - repo: local
     hooks:
       - id: main

@@ -1,0 +1,8 @@
+title = "Gitleaks Configuration"
+
+[allowlist]  # This should be a map, not a list
+description = "Allow specific false positives"
+regexes = [
+    "public_test_key_[a-zA-Z0-9]+",  # Example: Allows test API keys
+    "(fake-secret|test-password|dummy-key)"  # Example: Ignore placeholder secrets
+]

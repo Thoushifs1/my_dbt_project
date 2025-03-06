@@ -17,8 +17,7 @@ repos:
     rev: "v5.0.0"  # Use the latest stable version
     hooks:
       - id: check-yaml
-        args:
-          - "--unsafe"
+        args: ["--unsafe"]
       - id: check-toml
       - id: check-json
       - id: end-of-file-fixer
@@ -28,8 +27,7 @@ repos:
       - id: name-tests-test
       - id: check-symlinks
       - id: check-merge-conflict
-        args:
-          - "--assume-in-merge"
+        args: ["--assume-in-merge"]
       - id: debug-statements
       - id: detect-private-key
       - id: mixed-line-ending
@@ -41,23 +39,24 @@ repos:
       - id: check-case-conflict
       - id: no-commit-to-branch
         args:
-          - "--branch"
-          - "master"
-          - "--branch"
-          - "develop"
+          - "--branch=master"
+          - "--branch=develop"
         exclude: "foo.txt"
 
-  # Gitleaks Hook
+  # Gitleaks Hook for Detecting Secrets
   - repo: https://github.com/gitleaks/gitleaks
     rev: "v8.23.1"
     hooks:
       - id: gitleaks
+        args:
+          - "--config=.gitleaks.toml"
+        exclude: "(test_data/.*|logs/.*)"
 
   # Custom Local Hook for Branch Name Check
   - repo: local
     hooks:
-    - id: main
-      name: main
-      entry: bash -c '.git/hooks/main.sh'
-      language: system
-      stages: [commit, push]
+      - id: main
+        name: main
+        entry: bash -c '.git/hooks/main.sh'
+        language: system
+        stages: [commit, push]

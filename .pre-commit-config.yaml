@@ -1,9 +1,46 @@
 repos:
+  # SQLFluff Hooks
   - repo: https://github.com/sqlfluff/sqlfluff
     rev: "3.3.1"  # Use the latest stable version
     hooks:
       - id: sqlfluff-lint
-        args: ["--dialect", "snowflake"]
-
+        args:
+          - "--dialect"
+          - "snowflake"
       - id: sqlfluff-fix
-        args: ["--dialect", "snowflake"]
+        args:
+          - "--dialect"
+          - "snowflake"
+
+  # Pre-commit Hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v5.0.0"  # Use the latest stable version
+    hooks:
+      - id: check-yaml
+        args:
+          - "--unsafe"
+      - id: check-toml
+      - id: check-json
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-docstring-first
+      - id: check-added-large-files
+      - id: name-tests-test
+      - id: check-symlinks
+      - id: check-merge-conflict
+        args:
+          - "--assume-in-merge"
+      - id: debug-statements
+      - id: detect-private-key
+      - id: mixed-line-ending
+      - id: requirements-txt-fixer
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-ast
+      - id: fix-byte-order-marker
+      - id: check-case-conflict
+      - id: no-commit-to-branch
+        args:
+          - "--branch"
+          - "master"
+        exclude: "foo.txt"

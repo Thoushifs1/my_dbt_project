@@ -46,3 +46,18 @@ repos:
           - "--branch"
           - "develop"
         exclude: "foo.txt"
+
+  # Gitleaks Hook
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: "v8.23.1"
+    hooks:
+      - id: gitleaks
+
+  # Custom Local Hook for Branch Name Check
+  - repo: local
+    hooks:
+    - id: main
+      name: main
+      entry: bash -c '.git/hooks/main.sh'
+      language: system
+      stages: [commit, push]

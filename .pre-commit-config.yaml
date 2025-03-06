@@ -43,4 +43,6 @@ repos:
         args:
           - "--branch"
           - "master"
+          - "--branch"
+          - "develop"
         exclude: "foo.txt"

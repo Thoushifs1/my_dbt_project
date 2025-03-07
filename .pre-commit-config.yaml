@@ -95,8 +95,17 @@ repos:
     rev: "v2.0.1"
     hooks:
       - id: dbt-parse
+        additional_dependencies:
+          - "dbt-core"
+          - "dbt-snowflake"
       - id: dbt-docs-generate
+        additional_dependencies:
+          - "dbt-core"
+          - "dbt-snowflake"
       - id: dbt-compile
+        additional_dependencies:
+          - "dbt-core"
+          - "dbt-snowflake"
       - id: check-script-semicolon
         files: "^dbt/"
       - id: check-model-has-properties-file

@@ -91,7 +91,7 @@ repos:
           - "--FIX-EVEN-UNPARSABLE"
 
   # dbt-Checkpoint Hooks
-    - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+  - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
     rev: "v2.0.1"
     hooks:
       - id: dbt-parse
@@ -112,4 +112,3 @@ repos:
         files: "^dbt/models/"
       - id: check-model-has-tests
         files: "^dbt/models/"
-

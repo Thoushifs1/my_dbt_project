@@ -91,15 +91,25 @@ repos:
           - "--FIX-EVEN-UNPARSABLE"
 
   # dbt-Checkpoint Hooks
-  - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+    - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
     rev: "v2.0.1"
     hooks:
       - id: dbt-parse
+        additional_dependencies:
+          - "dbt-core"
+          - "dbt-snowflake"
       - id: dbt-docs-generate
+        additional_dependencies:
+          - "dbt-core"
+          - "dbt-snowflake"
       - id: dbt-compile
+        additional_dependencies:
+          - "dbt-core"
+          - "dbt-snowflake"
       - id: check-script-semicolon
         files: "^dbt/"
       - id: check-model-has-properties-file
         files: "^dbt/models/"
       - id: check-model-has-tests
         files: "^dbt/models/"
+

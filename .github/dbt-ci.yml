@@ -1,16 +1,13 @@
-name: CI/CD Pipeline for dbt with Snowflake
+name: dbt Schema Changes Pipeline
 
 on:
-  push:
-    branches:
-      - main
-      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
-  dbt_run:
+  schema_check:
     runs-on: ubuntu-latest
 
     steps:
@@ -51,8 +48,25 @@ jobs:
               private_key_path: ~/.ssh/snowflake_key.p8
         EOL
 
-    - name: Run dbt Commands
+    - name: Run dbt Debug
+      run: dbt debug
+
+    - name: Run dbt Compile
+      run: dbt compile
+
+    - name: Detect Schema Changes (if using dbt Cloud)
       run: |
-        dbt debug
-        dbt run
-        dbt test
+        dbt snapshot
+        dbt state:compare --state ./previous_state/
+
+    - name: Run dbt Tests (Check for Issues)
+      run: dbt test
+
+    - name: Generate dbt Docs
+      run: dbt docs generate
+
+    - name: Save Schema Changes Log
+      run: |
+        mkdir -p schema_logs
+        dbt docs generate > schema_logs/schema_diff.log
+        cat schema_logs/schema_diff.log

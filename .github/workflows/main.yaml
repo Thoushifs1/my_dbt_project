@@ -40,6 +40,9 @@ jobs:
           echo "SNOWFLAKE_PRIVATE_KEY=${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_SCHEMA=${{ secrets.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV
 
+      - name: Debug Environment Variables
+        run: env | grep SNOWFLAKE  # ✅ Check if SNOWFLAKE_SCHEMA is set
+
       - name: Test dbt Connection
         run: dbt debug
 

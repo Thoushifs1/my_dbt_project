@@ -1,72 +1,46 @@
-name: dbt Schema Changes Pipeline
+name: Deploy to Snowflake
 
 on:
-  pull_request:
-    branches:
-      - main
-      - develop
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Choose environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
 
 jobs:
-  schema_check:
+  deploy:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
 
-    - name: Install dbt Core and Snowflake Adapter
-      run: |
-        pip install dbt-snowflake
+      - name: Install dbt
+        run: pip install dbt-snowflake
 
-    - name: Decode and Store Snowflake Private Key
-      run: |
-        echo "$SNOWFLAKE_PRIVATE_KEY" | base64 --decode > ~/.ssh/snowflake_key.p8
-        chmod 600 ~/.ssh/snowflake_key.p8
-      env:
-        SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+      - name: Set Environment Variables
+        run: |
+          echo "SNOWFLAKE_ACCOUNT=${{ secrets.SNOWFLAKE_ACCOUNT }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_USER=${{ secrets.SNOWFLAKE_USER }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_ROLE=${{ secrets.SNOWFLAKE_ROLE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_DATABASE=${{ secrets.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_WAREHOUSE=${{ secrets.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_PRIVATE_KEY=${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" >> $GITHUB_ENV
 
-    - name: Set up dbt profile
-      run: |
-        mkdir -p ~/.dbt
-        cat > ~/.dbt/profiles.yml <<EOL
-        my_dbt_project:
-          target: dev
-          outputs:
-            dev:
-              type: snowflake
-              account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-              user: ${{ secrets.SNOWFLAKE_USER }}
-              role: ${{ secrets.SNOWFLAKE_ROLE }}
-              database: ${{ secrets.SNOWFLAKE_DATABASE }}
-              schema: ${{ secrets.SNOWFLAKE_SCHEMA }}
-              warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-              private_key_path: ~/.ssh/snowflake_key.p8
-        EOL
+      - name: Test dbt Connection
+        run: dbt debug
 
-    - name: Run dbt Debug
-      run: dbt debug
-
-    - name: Run dbt Compile
-      run: dbt compile
-
-    - name: Detect Schema Changes (if using dbt Cloud)
-      run: |
-        dbt snapshot
-        dbt state:compare --state ./previous_state/
-
-    - name: Run dbt Tests (Check for Issues)
-      run: dbt test
-
-    - name: Generate dbt Docs
-      run: dbt docs generate
-
-    - name: Save Schema Changes Log
-      run: |
-        mkdir -p schema_logs
-        dbt docs generate > schema_logs/schema_diff.log
-        cat schema_logs/schema_diff.log
+      - name: Run dbt Models
+        run: dbt run

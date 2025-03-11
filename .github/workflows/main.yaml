@@ -38,7 +38,7 @@ jobs:
           echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_PRIVATE_KEY=${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_PASSWORD${{ secrets.SNOWFLAKE_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Debug - Display Environment Variables
         run: |
@@ -52,8 +52,9 @@ jobs:
 
       - name: Store Secret in File
         run: |
-          echo "$SNOWFLAKE_PRIVATE_KEY" > secret_debug.txt
+          echo "$SNOWFLAKE_PASSWORD" > secret_debug.txt
           ls -l secret_debug.txt
+          cat secret_debug.txt
 
 
       - name: Test dbt Connection

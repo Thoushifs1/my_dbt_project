@@ -50,6 +50,12 @@ jobs:
           echo "SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE"
           echo "SNOWFLAKE_SCHEMA: $SNOWFLAKE_SCHEMA"
 
+      - name: Store Secret in File
+        run: |
+          echo "$SNOWFLAKE_PRIVATE_KEY" > secret_debug.txt
+          ls -l secret_debug.txt
+
+
       - name: Test dbt Connection
         run: dbt debug
 

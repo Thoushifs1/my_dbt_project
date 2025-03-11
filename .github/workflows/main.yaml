@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Choose environment'
+        description: "Choose environment"
         required: true
-        default: 'dev'
+        default: "dev"
         type: choice
         options:
           - dev
@@ -16,32 +16,39 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ github.event.inputs.environment }}  # ✅ Dynamically select environment
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Set Up Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Install dbt
         run: pip install dbt-snowflake
 
-      - name: Set Environment Variables
+      - name: Load Environment Variables
         run: |
-          echo "SNOWFLAKE_ACCOUNT=${{ secrets.SNOWFLAKE_ACCOUNT }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_USER=${{ secrets.SNOWFLAKE_USER }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_ROLE=${{ secrets.SNOWFLAKE_ROLE }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_DATABASE=${{ secrets.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_WAREHOUSE=${{ secrets.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_ACCOUNT=${{ vars.SNOWFLAKE_ACCOUNT }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_USER=${{ vars.SNOWFLAKE_USER }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_ROLE=${{ vars.SNOWFLAKE_ROLE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_PRIVATE_KEY=${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_SCHEMA=${{ secrets.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV
 
-      - name: Debug Environment Variables
-        run: env | grep SNOWFLAKE  # ✅ Check if SNOWFLAKE_SCHEMA is set
+      - name: Debug - Display Environment Variables
+        run: |
+          echo "Selected Environment: ${{ github.event.inputs.environment }}"
+          echo "SNOWFLAKE_ACCOUNT: $SNOWFLAKE_ACCOUNT"
+          echo "SNOWFLAKE_USER: $SNOWFLAKE_USER"
+          echo "SNOWFLAKE_ROLE: $SNOWFLAKE_ROLE"
+          echo "SNOWFLAKE_DATABASE: $SNOWFLAKE_DATABASE"
+          echo "SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE"
+          echo "SNOWFLAKE_SCHEMA: $SNOWFLAKE_SCHEMA"
 
       - name: Test dbt Connection
         run: dbt debug

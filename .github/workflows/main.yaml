@@ -6,17 +6,17 @@ on:
       environment:
         description: "Choose environment"
         required: true
-        default: "dev"
+        default: "test"
         type: choice
         options:
-          - dev
+          - Feature
           - test
           - prod
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}  # ✅ Dynamically select environment
+    environment: ${{ github.event.inputs.environment }} 
 
     steps:
       - name: Checkout Code
@@ -38,7 +38,8 @@ jobs:
           echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_PASSWORD=${{ secrets.SNOWFLAKE_PASSWORD }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_PRIVATE_KEY=${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" >> $GITHUB_ENV
+        shell: bash
 
       - name: Debug - Display Environment Variables
         run: |
@@ -49,13 +50,14 @@ jobs:
           echo "SNOWFLAKE_DATABASE: $SNOWFLAKE_DATABASE"
           echo "SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE"
           echo "SNOWFLAKE_SCHEMA: $SNOWFLAKE_SCHEMA"
+        shell: bash
 
       - name: Store Secret in File
         run: |
-          echo "$SNOWFLAKE_PASSWORD" > secret_debug.txt
+          echo "$SNOWFLAKE_PRIVATE_KEY" > secret_debug.txt
           ls -l secret_debug.txt
           cat secret_debug.txt
-
+        shell: bash
 
       - name: Test dbt Connection
         run: dbt debug

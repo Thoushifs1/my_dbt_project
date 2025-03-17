@@ -50,6 +50,12 @@ jobs:
           chmod 600 ~/.dbt/snowflake_key.pem
           echo "SNOWFLAKE_PRIVATE_KEY_PATH=$HOME/.dbt/snowflake_key.pem" >> $GITHUB_ENV
 
+      - name: Decode Snowflake Private Key
+        run: |
+         echo "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" | base64 --decode > snowflake_key.p8
+        shell: bash
+
+
       - name: Debug - Check Private Key File
         run: |
           echo "Checking if private key file exists..."

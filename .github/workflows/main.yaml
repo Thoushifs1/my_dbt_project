@@ -42,6 +42,7 @@ jobs:
           echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_PRIVATE_KEY_PASSPHRASE=${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}" >> $GITHUB_ENV
 
       - name: Store Private Key as a File
         run: |

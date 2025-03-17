@@ -1,6 +1,6 @@
-my_dbt_project:
+snowflake:
   outputs:
-    test:
+    dev:
       type: snowflake
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
       user: "{{ env_var('SNOWFLAKE_USER') }}"
@@ -8,6 +8,6 @@ my_dbt_project:
       database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
       schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
+      authenticator: "snowflake"
       private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
-      threads: 4
-  target: test
+  target: dev

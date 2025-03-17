@@ -7,7 +7,6 @@ my_dbt_project:
       role: "{{ env_var('SNOWFLAKE_ROLE') }}"
       database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
-      region: "{{ env_var('SNOWFLAKE_REGION') }}"
       schema: TEST
       private_key: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
       threads: 3

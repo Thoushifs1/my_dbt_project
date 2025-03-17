@@ -1,6 +1,10 @@
 name: Deploy to Snowflake
 
 on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
   workflow_dispatch:
     inputs:
       environment:
@@ -16,7 +20,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }} 
+    environment: ${{ github.event.inputs.environment || 'test' }}
 
     steps:
       - name: Checkout Code
@@ -38,10 +42,21 @@ jobs:
           echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_PRIVATE_KEY=${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" >> $GITHUB_ENV
-        shell: bash
 
-      - name: Debug - Display Environment Variables
+      - name: Store Private Key as a File
+        run: |
+          mkdir -p ~/.dbt
+          echo "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" | awk '{gsub(/\\n/,"\n")}1' > ~/.dbt/snowflake_key.pem
+          chmod 600 ~/.dbt/snowflake_key.pem
+          echo "SNOWFLAKE_PRIVATE_KEY_PATH=$HOME/.dbt/snowflake_key.pem" >> $GITHUB_ENV
+
+      - name: Debug - Check Private Key File
+        run: |
+          echo "Checking if private key file exists..."
+          ls -l ~/.dbt/snowflake_key.pem || echo "Private key file not found!"
+          head -5 ~/.dbt/snowflake_key.pem || echo "Unable to read key!"
+
+      - name: Debug - Check Environment Variables
         run: |
           echo "Selected Environment: ${{ github.event.inputs.environment }}"
           echo "SNOWFLAKE_ACCOUNT: $SNOWFLAKE_ACCOUNT"
@@ -50,14 +65,6 @@ jobs:
           echo "SNOWFLAKE_DATABASE: $SNOWFLAKE_DATABASE"
           echo "SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE"
           echo "SNOWFLAKE_SCHEMA: $SNOWFLAKE_SCHEMA"
-        shell: bash
-
-      - name: Store Secret in File
-        run: |
-          echo "$SNOWFLAKE_PRIVATE_KEY" > secret_debug.txt
-          ls -l secret_debug.txt
-          cat secret_debug.txt
-        shell: bash
 
       - name: Test dbt Connection
         run: dbt debug

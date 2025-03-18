@@ -34,8 +34,6 @@ jobs:
       - name: Install dbt
         run: pip install dbt-snowflake
 
-      
-
       - name: Load Environment Variables
         run: |
           echo "SNOWFLAKE_ACCOUNT=${{ vars.SNOWFLAKE_ACCOUNT }}" >> $GITHUB_ENV

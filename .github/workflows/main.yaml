@@ -34,6 +34,10 @@ jobs:
       - name: Install dbt
         run: pip install dbt-snowflake
 
+      - name: Use secret as an environment variable
+         env:
+          SNOWFLAKE_PRIVATE_KEY : ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+
       - name: Load Environment Variables
         run: |
           echo "SNOWFLAKE_ACCOUNT=${{ vars.SNOWFLAKE_ACCOUNT }}" >> $GITHUB_ENV
@@ -42,7 +46,7 @@ jobs:
           echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_PRIVATE_KEY_PASSPHRASE=${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_PRIVATE_KEY=${{ vars.SNOWFLAKE_PRIVATE_KEY }}" >> $GITHUB_ENV
 
       - name: Store Private Key as a File
         run: |

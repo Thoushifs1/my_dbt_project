@@ -8,6 +8,7 @@ my_dbt_project:
       database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
       schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
-      private_key: "{{ env_var('SNOWFLAKE_PRIVATE_KEY) }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH') }}"
+      private_key_passphrase: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PASSPHRASE') }}"
       threads: 4
   target: test

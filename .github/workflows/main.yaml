@@ -35,8 +35,9 @@ jobs:
         run: pip install dbt-snowflake
 
       - name: Use secret as an environment variable
-         env:
-          SNOWFLAKE_PRIVATE_KEY : ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+        env:
+          SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+
 
       - name: Load Environment Variables
         run: |

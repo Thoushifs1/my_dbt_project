@@ -42,8 +42,7 @@ jobs:
           echo "SNOWFLAKE_USER=${{ vars.SNOWFLAKE_USER }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_ROLE=${{ vars.SNOWFLAKE_ROLE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
-          echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA }}" >> $GITHUB_ENV          
+          echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV         
       - name: Store Private Key as a File
         run: |
           mkdir -p ~/.dbt

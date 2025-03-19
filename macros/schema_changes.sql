@@ -3,7 +3,7 @@
   
   -- Create schema if it does not exist
   {% set create_schema_sql %}
-    CREATE SCHEMA IF NOT EXISTS {{ Test123 }};
+    CREATE SCHEMA IF NOT EXISTS {{ schema_name }};
   {% endset %}
   
   -- Execute the SQL

@@ -63,6 +63,7 @@ jobs:
           echo "SNOWFLAKE_DATABASE: $SNOWFLAKE_DATABASE"
           echo "SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE"
           echo "SNOWFLAKE_SCHEMA: $SNOWFLAKE_SCHEMA"
+          
       - name: Test dbt Connection
         run: dbt debug
 

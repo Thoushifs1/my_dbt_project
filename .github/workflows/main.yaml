@@ -54,6 +54,7 @@ jobs:
           echo "Checking if private key file exists..."
           ls -l ~/.dbt/snowflake_key.pem || echo "Private key file not found!"
           head -5 ~/.dbt/snowflake_key.pem || echo "Unable to read key!"
+          
       - name: Debug - Check Environment Variables
         run: |
           echo "Selected Environment: ${{ github.event.inputs.environment }}"

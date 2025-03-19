@@ -42,7 +42,7 @@ jobs:
           echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
           echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV  
           echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA || 'PUBLIC' }}" >> $GITHUB_ENV
-  
+   
       - name: Store Private Key as a File
         run: |
           mkdir -p ~/.dbt
@@ -54,7 +54,6 @@ jobs:
           echo "Checking if private key file exists..."
           ls -l ~/.dbt/snowflake_key.pem || echo "Private key file not found!"
           head -5 ~/.dbt/snowflake_key.pem || echo "Unable to read key!"
-          
       - name: Debug - Check Environment Variables
         run: |
           echo "Selected Environment: ${{ github.event.inputs.environment }}"
@@ -64,9 +63,8 @@ jobs:
           echo "SNOWFLAKE_DATABASE: $SNOWFLAKE_DATABASE"
           echo "SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE"
           echo "SNOWFLAKE_SCHEMA: $SNOWFLAKE_SCHEMA"
-          
       - name: Test dbt Connection
-        run: dbt debug 
-        
+        run: dbt debug
+
       - name: Run dbt Models
         run: dbt run

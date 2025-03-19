@@ -1,0 +1,59 @@
+name: Deploy to Snowflake with Docker
+
+on:
+  push:
+    branches: [ "develop" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: test
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Load Environment Variables
+        run: |
+          echo "SNOWFLAKE_ACCOUNT=${{ vars.SNOWFLAKE_ACCOUNT }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_USER=${{ vars.SNOWFLAKE_USER }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_ROLE=${{ vars.SNOWFLAKE_ROLE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_DATABASE=${{ vars.SNOWFLAKE_DATABASE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_WAREHOUSE=${{ vars.SNOWFLAKE_WAREHOUSE }}" >> $GITHUB_ENV
+          echo "SNOWFLAKE_SCHEMA=${{ vars.SNOWFLAKE_SCHEMA || 'PUBLIC' }}" >> $GITHUB_ENV
+
+      - name: Store Private Key as a File
+        run: |
+          mkdir -p ~/.dbt
+          echo "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" | awk '{gsub(/\\n/,"\n")}1' > ~/.dbt/snowflake_key.pem
+          chmod 600 ~/.dbt/snowflake_key.pem
+          echo "SNOWFLAKE_PRIVATE_KEY_PATH=$HOME/.dbt/snowflake_key.pem" >> $GITHUB_ENV
+
+      - name: Build Docker Image
+        run: |
+          docker build -t my-dbt-image .
+
+      - name: Run dbt Debug
+        run: |
+          docker run --rm \
+            -e SNOWFLAKE_ACCOUNT=$SNOWFLAKE_ACCOUNT \
+            -e SNOWFLAKE_USER=$SNOWFLAKE_USER \
+            -e SNOWFLAKE_ROLE=$SNOWFLAKE_ROLE \
+            -e SNOWFLAKE_DATABASE=$SNOWFLAKE_DATABASE \
+            -e SNOWFLAKE_WAREHOUSE=$SNOWFLAKE_WAREHOUSE \
+            -e SNOWFLAKE_SCHEMA=$SNOWFLAKE_SCHEMA \
+            -v ~/.dbt:/root/.dbt \
+            my-dbt-image debug
+
+      - name: Run dbt Models in Docker
+        run: |
+          docker run --rm \
+            -e SNOWFLAKE_ACCOUNT=$SNOWFLAKE_ACCOUNT \
+            -e SNOWFLAKE_USER=$SNOWFLAKE_USER \
+            -e SNOWFLAKE_ROLE=$SNOWFLAKE_ROLE \
+            -e SNOWFLAKE_DATABASE=$SNOWFLAKE_DATABASE \
+            -e SNOWFLAKE_WAREHOUSE=$SNOWFLAKE_WAREHOUSE \
+            -e SNOWFLAKE_SCHEMA=$SNOWFLAKE_SCHEMA \
+            -v ~/.dbt:/root/.dbt \
+            my-dbt-image run

@@ -1,0 +1,44 @@
+name: Deploy dbt Schema Changes
+
+on:
+  push:
+    branches:
+      - main  # Change to match your deployment branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛠️ Checkout code
+        uses: actions/checkout@v3
+
+      - name: ⚡ Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - name: 📦 Install dbt
+        run: |
+          pip install dbt-snowflake
+
+      - name: 🔑 Configure SSH Key for Snowflake
+        run: |
+          echo "$SNOWFLAKE_PRIVATE_KEY" > private_key.p8
+          chmod 600 private_key.p8
+        env:
+          SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+
+      - name: 🏗 Run dbt Schema Changes
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+          SNOWFLAKE_PRIVATE_KEY_PATH: private_key.p8
+        run: |
+          dbt debug
+          dbt run
+          dbt test

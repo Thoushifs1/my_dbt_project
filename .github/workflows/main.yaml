@@ -67,5 +67,6 @@ jobs:
           
       - name: Test dbt Connection
         run: dbt debug
+        
       - name: Run dbt Models
         run: dbt run
